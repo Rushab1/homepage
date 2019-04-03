@@ -1,0 +1,35 @@
+
+\section{Introduction}
+A major problem in machine learning is over-fitting. The paper proposes a solution to this problem, using quantization. The experiments show that the performance is better when there are a large number of feature, compared to the number of training data points. 
+\section{Notation}
+x=\{$x_1,x_2, \dots ,x_n$\} denote the variables.
+$\bar{x}=\{\bar{x_1},\dots,\bar{x_n}\}$ denote an assignment of values to the variables and y denote the target values.\\
+
+Let $g_\theta:\mathbb{R}^n\rightarrow\mathbb{R}$ be a function that maps the input vector $x$ to the Real space. For example, for a linear decision boundary, $g_{\theta}(x)=\theta^{T}x + b$ where $\theta=\{\theta_1,\theta_2,\dots,\theta_m\}$ are the parameters to be learnt and b is the bias.\\
+
+
+ Since we are concerned with Logistic Regression, we define $\sigma:\mathbb{R}\rightarrow\mathbb{R}$ as the sigmoid function, $$\sigma(z)=\frac{1}{1+e^{-z}}$$ where $z=g_{\theta}(x)$. The  vector of parameters $\theta$ is to be learnt. Thus here the sigmoid function is denoted as $$\sigma_\theta(x)=\frac{1}{1+e^{-\theta^{T}x}}$$
+
+Let D be the number of samples in the training data denoted by $\bar{X}_{D\times n}$, the rows of which be denoted by $\bar{x}^{(i)}$, $1\leq i \leq D$. Let $\bar{Y}$ be a column vector of the target values $\{\bar{y}^{(1)},\dots,\bar{y}^{(D)}$ \\
+
+
+Define the cost function $J:\mathbb{R}^{m}\rightarrow\mathbb{R}$ for Logistic Regression as $$J(\theta)=\sum_{i=1}^{D}\bar{y}^{(i)}log(\sigma_\theta(\bar{x}^{(i)}) + (1-\bar{y}^{(i)})log(1 - \sigma_\theta(\bar{x}^{(i)})$$\\
+
+Let $k\leq m$ denote the number of equivalence classes (clusters) into which the $m$ parameters are to be divided into (to form $k$ clusters).
+
+
+\section{The algorithm}
+
+Initially Logistic Regression can be implemented using any standard minimization algorithm to do so, For example, BFGS. The weights so obtained may fit the input data very well, however these may be prone to over-fitting. Regularization may be used to overcome this problem, instead we impose certain equality constraints (through equivalence relations) on the parameters and re-learn the model (according to the paper).\\
+
+One can use one dimensional k-means clustering on the $m$ parameters, where k is specified apriori (i.e. k is not learnt). This can be achieved in $O(m^2k)$ time using dynamic programming (Wang and Song, 2011).\\
+
+Let $S_1,S_2,\dots,S_k$ be the k clusters thus obtained.
+Define  a quantization $\mu=\{\mu_1,\mu_2,\dots,\mu_k\}$ of $\theta$ and $\mathbb{Q}:\bar{\theta}\rightarrow\mu$ be the quantizer between $x$ and $\mu$, so that $\mathbb{Q}(\theta_j)=\mu_i$ iff $\theta_j \in S_i$. 
+Further, let the notation $\mathbb{Q}(\theta)$ denote the m dimensional vector $\{\mathbb{Q}(\theta_1),\mathbb{Q}(\theta_2),\dots,\mathbb{Q}(\theta_m)\}$
+A new cost function can then be defined based on these constraints as follows:  
+$$J_2(\theta)=\sum_{i=1}^{D}\bar{y}^{(i)}log(\sigma_{\mathbb{Q}(\theta)}(\bar{x}^{(i)}) + (1-\bar{y}^{(i)})log(1 - \sigma_{\mathbb{Q}(\theta)}(\bar{x}^{(i)})$$
+The k parameters $\{\mu_1,\dots,\mu_k\}$ are to be learnt so that $j_2(\theta)$ is minimized and this can be done using any standard minimization technique like BFGS. The initial values for $\{\mu_1,\dots,\mu_k\}$ can be taken as the means of clusters $S_1,\dots,S_k$.\\
+
+It is better to normalize the data appropriately so that the exponential term in the sigmoid function does not become very large or very small. An easy way to normalize is to divide $\theta^{T}\bar{x}^{(i)}$ by $max_{1\leq i\leq D}(\theta^{T}\bar{x})$.
+
